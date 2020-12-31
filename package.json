@@ -1,8 +1,8 @@
 {
-  "name": "protein-visualizer-sun-lab",
+  "name": "protein-visualizer",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://protein-visualizer-sun-lab.herokuapp.com/",
+  "homepage": "http://ddkpham.github.io/protein-visualizer",
   "dependencies": {
     "@material-ui/core": "^4.8.3",
     "@material-ui/icons": "^4.5.1",
