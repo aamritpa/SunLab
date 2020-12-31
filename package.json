@@ -1,8 +1,13 @@
 {
+<<<<<<< HEAD
   "name": "protein-visualizer",
   "version": "0.1.0",
   "private": true,
   "homepage": "http://ddkpham.github.io/protein-visualizer",
+=======
+  "version": "0.1.0",
+  "private": true,
+>>>>>>> fd25b4fc7f87977c89bec572be1f2e1c2d501ff2
   "dependencies": {
     "@material-ui/core": "^4.8.3",
     "@material-ui/icons": "^4.5.1",
