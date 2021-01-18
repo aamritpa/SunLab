@@ -36,20 +36,25 @@ const useStyles = makeStyles({
  *
  * @param {Object} props
  * @property {Object} glycoslation object containing glyco bond info
+ * @property {Object} cysteine
  * @property {Object} disulfideBonds object containing sulfide bond info
  * @property {func} toggleGlyco Function that toggles glyco bond visibility
+ * @property {func} toggleCysteine
  * @property {func} toggleSulfide Function that toggles sulfide bond visibility
  * @property {integar} length total length of protein structure
  */
 function Legend(props) {
   const {
     glycoslation,
+    cysteine,
     disulfideBonds,
     toggleGlyco,
     toggleSulfide,
+    toggleCysteine,
     length
   } = props;
   const [showGlyco, setShowGlyco] = useState(true);
+  const [showCysteine, setShowCysteine] = useState(true);
   const [showSulfide, setShowSulfide] = useState(true);
   const classes = useStyles();
 
@@ -57,9 +62,15 @@ function Legend(props) {
     if (bond === 'sulfide') {
       toggleSulfide(!showSulfide);
       setShowSulfide(!showSulfide);
-    } else {
+    } 
+    else if(bond === 'glyco') {
       toggleGlyco(!showGlyco);
       setShowGlyco(!showGlyco);
+    }
+    else if(bond === 'cysteine')
+    {
+      toggleCysteine(!showCysteine);
+      setShowCysteine(!showCysteine);
     }
   };
 
@@ -83,6 +94,7 @@ function Legend(props) {
               {glycoslation.length}
             </Typography>
           </Typography>
+
           <div className={`button-visibility${showGlyco ? '--on' : '--off'}`}>
             <Tooltip title="toggle visibility" placement="right-end">
               <IconButton
@@ -95,6 +107,28 @@ function Legend(props) {
             </Tooltip>
           </div>
         </div>
+
+        <div className="legend--menuItem">
+          <Typography>
+            Total Cysteine Bonds:
+            <Typography display="inline" classes={{ root: 'bold-text' }}>
+              {cysteine.length}
+            </Typography>
+          </Typography>
+
+          <div className={`button-visibility${showCysteine ? '--on' : '--off'}`}>
+            <Tooltip title="toggle visibility" placement="right-end">
+              <IconButton
+                aria-label="delete"
+                className={{ root: 'on' }}
+                onClick={() => handleToggle('cysteine')}
+              >
+                <VisibilityIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
+
         <div className="legend--menuItem">
           <Typography>
             Total Sulfide Bonds:
@@ -130,13 +164,15 @@ Legend.propTypes = {
   glycoslation: PropTypes.arrayOf(PropTypes.string).isRequired,
   disulfideBonds: PropTypes.arrayOf(PropTypes.string).isRequired,
   toggleGlyco: PropTypes.func,
+  toggleCysteine: PropTypes.func,
   toggleSulfide: PropTypes.func,
   length: PropTypes.number.isRequired
 };
 
 Legend.defaultProps = {
   toggleGlyco: () => {},
-  toggleSulfide: () => {}
+  toggleSulfide: () => {},
+  toggleCysteine: () => {}
 };
 
 export default Legend;

@@ -22,6 +22,7 @@ const getProteins = async () => {
     protein.description = el['Protein names'];
     protein.disulfideBonds = arrayStrConversion(el['Dislfide bond']);
     protein.glycoslation = arrayStrConversion(el.Glycosylation);
+    protein.cysteine= arrayStrConversion(el.Cysteine);
     protein.length = parseInt(el.Length, 10);
     proteinsData.push(protein);
   });

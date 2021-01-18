@@ -51,6 +51,7 @@ function Visualization(props) {
   const {
     disulfideBonds,
     glycoslation,
+    cysteine,
     length: proteinLength
   } = initialOptions[currSelection];
 
@@ -62,6 +63,7 @@ function Visualization(props) {
   const { start: windowStart, end: windowEnd } = windowPos;
   const [windowView, setWindowView] = useState(false);
   const [showGlyco, setShowGlyco] = useState(true);
+  const [showCysteine, setShowCysteine] = useState(true);
   const [showDisulfide, setShowDisulfide] = useState(true);
 
   const scaleVisualization = scaleFactor !== 1;
@@ -202,6 +204,86 @@ function Visualization(props) {
         .attr('r', CIRCLE_RADIUS + 3)
         .style('stroke', 'black')
         .style('fill', 'grey');
+
+      const mol3 = g.append('rect');
+      mol3
+        .attr('width', 14)
+        .attr('height', 14)
+        .attr('x', scale(el) - 7)
+        .attr('y', SULFIDE_POS - GLYCO_STEM_LENGTH - GLYCO_LINK_LENGTH * 5)
+        .style('fill', 'white')
+        .style('stroke', 'black');
+    });
+  };
+
+  const attachCysteineBonds = (g, isWindowView) => {
+    let gBonds = cysteine.map(el => parseInt(el, 10));
+    if (isWindowView) {
+      gBonds = gBonds.filter(bond => bond >= windowStart && bond <= windowEnd);
+    }
+    const scale = isWindowView ? windowScale : xScale;
+    gBonds.forEach(el => {
+      const atom = g.append('text');
+
+      atom
+        .attr('dx', scale(el) - 5)
+        .attr('dy', SULFIDE_POS + 5)
+        .text(() => `C`)
+        .attr('class', 'glyco-labels');
+
+      const pos = g.append('text');
+      pos
+        .attr('dx', scale(el) + 3)
+        .attr('dy', SULFIDE_POS + 7)
+        .text(() => `${el}`)
+        .attr('class', 'glyco-labels--pos');
+
+      const stem = g.append('line');
+      stem
+        .attr('x1', scale(el))
+        .attr('y1', SULFIDE_POS - 10)
+        .attr('x2', scale(el))
+        .attr('y2', SULFIDE_POS - GLYCO_STEM_LENGTH)
+        .style('stroke', 'black');
+
+      const mol1 = g.append('circle');
+      mol1
+        .attr('cx', scale(el))
+        .attr('cy', SULFIDE_POS - GLYCO_STEM_LENGTH)
+        .attr('r', CIRCLE_RADIUS + 3)
+        .style('stroke', 'black')
+        .style('fill', 'blue');
+
+      const link = g.append('line');
+      link
+        .attr('x1', scale(el))
+        .attr('y1', SULFIDE_POS - GLYCO_STEM_LENGTH)
+        .attr('x2', scale(el))
+        .attr('y2', SULFIDE_POS - GLYCO_STEM_LENGTH - GLYCO_LINK_LENGTH * 2)
+        .style('stroke', 'black');
+
+      const link2 = g.append('line');
+      link2
+        .attr('x1', scale(el))
+        .attr('y1', SULFIDE_POS - GLYCO_STEM_LENGTH - GLYCO_LINK_LENGTH * 2)
+        .attr('x2', scale(el))
+        .attr('y2', SULFIDE_POS - GLYCO_STEM_LENGTH - GLYCO_LINK_LENGTH * 3.5)
+        .style('stroke', 'black');
+      const link3 = g.append('line');
+      link3
+        .attr('x1', scale(el))
+        .attr('y1', SULFIDE_POS - GLYCO_STEM_LENGTH - GLYCO_LINK_LENGTH * 3.5)
+        .attr('x2', scale(el))
+        .attr('y2', SULFIDE_POS - GLYCO_STEM_LENGTH - GLYCO_LINK_LENGTH * 4.5)
+        .style('stroke', 'black');
+
+      const mol2 = g.append('circle');
+      mol2
+        .attr('cx', scale(el))
+        .attr('cy', SULFIDE_POS - GLYCO_STEM_LENGTH - GLYCO_LINK_LENGTH * 2)
+        .attr('r', CIRCLE_RADIUS + 3)
+        .style('stroke', 'black')
+        .style('fill', 'green');
 
       const mol3 = g.append('rect');
       mol3
@@ -417,6 +499,10 @@ function Visualization(props) {
     if (showGlyco) {
       attachGlycoBonds(g, isWindowView);
     }
+    if(showCysteine)
+    {
+      attachCysteineBonds(g, isWindowView);
+    }
     if (!isWindowView) {
       attachNTerminus(g);
     }
@@ -447,6 +533,7 @@ function Visualization(props) {
     svgRef.current,
     showDisulfide,
     showGlyco,
+    showCysteine,
     scaleVisualization,
     scaleFactor,
     fullScale,
@@ -489,8 +576,10 @@ function Visualization(props) {
       {isLegendOpen ? (
         <Legend
           glycoslation={glycoslation}
+          cysteine={cysteine}
           disulfideBonds={disulfideBonds}
           toggleGlyco={setShowGlyco}
+          toggleCysteine= {setShowCysteine}
           toggleSulfide={setShowDisulfide}
           length={proteinLength}
         />

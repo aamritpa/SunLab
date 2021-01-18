@@ -37,12 +37,14 @@ const useStyles = makeStyles({
 function ProteinWindow(props) {
   const {
     toggleGlyco,
+    toggleCysteine,
     toggleSulfide,
     length,
     updateWindowStart,
     updateWindowEnd
   } = props;
   const [showGlyco, setShowGlyco] = useState(true);
+  const [showCysteine,setShowCysteine]= useState(true);
   const [showSulfide, setShowSulfide] = useState(true);
   const classes = useStyles();
 
@@ -53,9 +55,13 @@ function ProteinWindow(props) {
     if (bond === 'sulfide') {
       toggleSulfide(!showSulfide);
       setShowSulfide(!showSulfide);
-    } else {
+    } else if(bond==='glyco') {
       toggleGlyco(!showGlyco);
       setShowGlyco(!showGlyco);
+    }
+    else{
+      toggleCysteine(!showCysteine);
+      setShowCysteine(!showCysteine);
     }
   };
 
@@ -79,6 +85,7 @@ function ProteinWindow(props) {
               </Typography>
             </Typography>
           </div>
+          
           <div className="window--menuItem">
             <TextField
               id="outlined-basic"
