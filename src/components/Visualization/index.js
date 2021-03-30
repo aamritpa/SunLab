@@ -472,10 +472,54 @@ function Visualization(props) {
       .attr('height', SPINE_HEIGHT)
       .attr('x', startPos)
       .attr('y', innerHeight / 2)
-      .style('fill', 'white')
+      .style('fill', 'snow')
       .style('stroke', 'black');
   };
+//////////////////////////////////////////////////////////////////////
+    //Temporary Code
+  const attachHalfSpine = (g, isWindowView) => {
+    
+    var spineBase= new Array(5);
+    for(var i=0;i<=5;i++)
+    {
+      //There will be two conditionds to focus on
+      
+      if( i%2==1)
+      {
+        spineBase[i] = g.append('rect');
+        let spineWidth = fullScale ? proteinLength : SPINE_WIDTH;
+        const startPos = isWindowView ? WINDOW_SPINE_START_POS : SPINE_START_POS;
+        if (isWindowView) {
+          spineWidth = WINDOW_SPINE_WIDTH;
+        }
+        spineBase[i]
+          .attr('width', 50)
+          .attr('height', SPINE_HEIGHT)
+          .attr('x', 200+100*i)
+          .attr('y', innerHeight / 2)
+          .style('fill', 'thistle')
+          .style('stroke', 'black');
+      }
+      else
+      {
+        spineBase[i] = g.append('rect');
+        let spineWidth = fullScale ? proteinLength : SPINE_WIDTH;
+        const startPos = isWindowView ? WINDOW_SPINE_START_POS : SPINE_START_POS;
+        if (isWindowView) {
+          spineWidth = WINDOW_SPINE_WIDTH;
+        }
+        spineBase[i]
+          .attr('width', 50)
+          .attr('height', SPINE_HEIGHT)
+          .attr('x', 200+200*i)
+          .attr('y', innerHeight / 2)
+          .style('fill', 'lightskyblue')
+          .style('stroke', 'black');
+      }
+    }
+  };
 
+////////////////////////////////////////////////////////////  
   const attachNTerminus = g => {
     const NTerm = g.append('text');
     NTerm.attr('dx', SPINE_START_POS - 50)
@@ -493,6 +537,8 @@ function Visualization(props) {
     const g = svg.append('g');
     g.attr('transform', `translate(${translateX}, ${translateY})`);
     attachSpine(g, isWindowView);
+    
+    attachHalfSpine(g, isWindowView);
     if (showDisulfide) {
       attachSulfides(g, isWindowView);
     }
@@ -614,5 +660,7 @@ Visualization.defaultProps = {
   height: 500,
   width: 500
 };
+
+
 
 export default Visualization;
