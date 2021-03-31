@@ -6,6 +6,8 @@ import Legend from '../Legend';
 import ProteinWindow from './ProteinWindow';
 
 import './index.scss';
+import { render } from '@testing-library/react';
+import { green } from '@material-ui/core/colors';
 
 const CIRCLE_RADIUS = 5;
 const SPINE_HEIGHT = 30;
@@ -55,7 +57,6 @@ function Visualization(props) {
     length: proteinLength
   } = initialOptions[currSelection];
 
-  console.log('Visualization -> proteinLength', proteinLength);
 
   const svgRef = useRef(null);
   const windowSvgRef = useRef(null);
@@ -321,10 +322,10 @@ function Visualization(props) {
         const [x, y] = b.split(' ');
         const b1 = parseInt(x, 10);
         const b2 = parseInt(y, 10);
+        
         return b1 < windowStart && b2 <= windowEnd && b2 > windowStart;
       });
 
-      console.log('attachSulfides -> leftBonds', leftBonds);
 
       leftBonds.forEach((pair, idx) => {
         const [x, y] = pair.split(' ');
@@ -417,7 +418,6 @@ function Visualization(props) {
           .style('stroke', 'black');
       });
     }
-
     bonds.forEach((pair, idx) => {
       const [x, y] = pair;
       pair.forEach(el => {
@@ -476,50 +476,39 @@ function Visualization(props) {
       .style('stroke', 'black');
   };
 //////////////////////////////////////////////////////////////////////
-    //Temporary Code
-  const attachHalfSpine = (g, isWindowView) => {
+const attachHalfSpine = (g, isWindowView) => {
+  const bondPos = [];
+  let bonds = disulfideBonds.map(pair => {
+    const atoms = pair.split(' ');
+    atoms.forEach(el => {
+      const atom = parseInt(el, 10);
+      bondPos.push(atom);
+    });
     
-    var spineBase= new Array(5);
-    for(var i=0;i<=5;i++)
-    {
-      //There will be two conditionds to focus on
-      
-      if( i%2==1)
-      {
-        spineBase[i] = g.append('rect');
-        let spineWidth = fullScale ? proteinLength : SPINE_WIDTH;
-        const startPos = isWindowView ? WINDOW_SPINE_START_POS : SPINE_START_POS;
-        if (isWindowView) {
-          spineWidth = WINDOW_SPINE_WIDTH;
-        }
-        spineBase[i]
-          .attr('width', 50)
-          .attr('height', SPINE_HEIGHT)
-          .attr('x', 200+100*i)
-          .attr('y', innerHeight / 2)
-          .style('fill', 'thistle')
-          .style('stroke', 'black');
-      }
-      else
-      {
-        spineBase[i] = g.append('rect');
-        let spineWidth = fullScale ? proteinLength : SPINE_WIDTH;
-        const startPos = isWindowView ? WINDOW_SPINE_START_POS : SPINE_START_POS;
-        if (isWindowView) {
-          spineWidth = WINDOW_SPINE_WIDTH;
-        }
-        spineBase[i]
-          .attr('width', 50)
-          .attr('height', SPINE_HEIGHT)
-          .attr('x', 200+200*i)
-          .attr('y', innerHeight / 2)
-          .style('fill', 'lightskyblue')
-          .style('stroke', 'black');
-      }
-    }
-  };
+    return bondPos; 
+  });
+  console.log(bondPos[0]);
+  const scale = isWindowView ? windowScale : xScale;
+  if (isWindowView) {
+    bonds = bonds.filter(bond => {
+      const [x, y] = bond;
+      return x >= windowStart && y <= windowEnd;
+    });
+  }
+  var listOfArray= new Array(bondPos.length);
+  for(var i=0;i<bondPos.length;i+=2)
+  {
+    listOfArray[i] = g.append('rect');
 
-////////////////////////////////////////////////////////////  
+    listOfArray[i]
+      .attr('width', scale(bondPos[i+1])-scale(bondPos[i]))
+      .attr('height', SPINE_HEIGHT)
+      .attr('x',scale(bondPos[i]))
+      .attr('y', innerHeight / 2)
+      .style('fill', 'green')
+      .style('stroke', 'black');
+  }
+};
   const attachNTerminus = g => {
     const NTerm = g.append('text');
     NTerm.attr('dx', SPINE_START_POS - 50)
@@ -537,7 +526,6 @@ function Visualization(props) {
     const g = svg.append('g');
     g.attr('transform', `translate(${translateX}, ${translateY})`);
     attachSpine(g, isWindowView);
-    
     attachHalfSpine(g, isWindowView);
     if (showDisulfide) {
       attachSulfides(g, isWindowView);
