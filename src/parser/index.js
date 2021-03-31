@@ -17,12 +17,13 @@ const getProteins = async () => {
   const proteins = await getData();
   proteins.forEach(el => {
     const protein = {};
-    protein.value = el['Entry name'];
+    protein.value = el['Entry'];
     protein.label = el['Entry name'];
     protein.description = el['Protein names'];
     protein.disulfideBonds = arrayStrConversion(el['Dislfide bond']);
     protein.glycoslation = arrayStrConversion(el.Glycosylation);
     protein.cysteine= arrayStrConversion(el.Cysteine);
+    protein.topology= el.topology;
     protein.length = parseInt(el.Length, 10);
     proteinsData.push(protein);
   });

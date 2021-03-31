@@ -54,6 +54,7 @@ function Visualization(props) {
     disulfideBonds,
     glycoslation,
     cysteine,
+    topology,
     length: proteinLength
   } = initialOptions[currSelection];
 
@@ -477,38 +478,78 @@ function Visualization(props) {
   };
 //////////////////////////////////////////////////////////////////////
 const attachHalfSpine = (g, isWindowView) => {
-  const bondPos = [];
-  let bonds = disulfideBonds.map(pair => {
-    const atoms = pair.split(' ');
-    atoms.forEach(el => {
-      const atom = parseInt(el, 10);
-      bondPos.push(atom);
-    });
-    
-    return bondPos; 
-  });
-  console.log(bondPos[0]);
-  const scale = isWindowView ? windowScale : xScale;
-  if (isWindowView) {
-    bonds = bonds.filter(bond => {
-      const [x, y] = bond;
-      return x >= windowStart && y <= windowEnd;
-    });
-  }
-  var listOfArray= new Array(bondPos.length);
-  for(var i=0;i<bondPos.length;i+=2)
+  const ibondPos = [];
+  let insidePos=topology.match(/i\d+\-\d+/g)
+  if(insidePos!=null)
   {
-    listOfArray[i] = g.append('rect');
-
-    listOfArray[i]
-      .attr('width', scale(bondPos[i+1])-scale(bondPos[i]))
-      .attr('height', SPINE_HEIGHT)
-      .attr('x',scale(bondPos[i]))
-      .attr('y', innerHeight / 2)
-      .style('fill', 'green')
-      .style('stroke', 'black');
+    let ibonds = insidePos.map(pair => {
+      const atoms = pair.match(/\d+/g)
+      atoms.forEach(el => {
+        const atom = parseInt(el, 10);
+        ibondPos.push(atom);
+      });
+      return ibondPos; 
+    });
+  
+    const iScale = isWindowView ? windowScale : xScale;
+    if (isWindowView) {
+      ibonds = ibonds.filter(bond => {
+        const [x, y] = bond;
+        return x >= windowStart && y <= windowEnd;
+      });
+    }
+    var listOfArray= new Array(ibondPos.length);
+    for(var i=0;i<ibondPos.length;i+=2)
+    {
+      listOfArray[i] = g.append('rect');
+  
+      listOfArray[i]
+        .attr('width', iScale(ibondPos[i+1])-iScale(ibondPos[i]))
+        .attr('height', SPINE_HEIGHT)
+        .attr('x',iScale(ibondPos[i]))
+        .attr('y', innerHeight / 2)
+        .style('fill', '#a5d6a7')
+        .style('stroke', 'black');
+    }
+  }
+ 
+  //Outside Position
+  let outsidePos=topology.match(/o\d+\-\d+/g);
+  const obondPos = [];
+  if(outsidePos!=null)
+  {
+    let obonds = outsidePos.map(pair => {
+      const atoms = pair.match(/\d+/g)
+      atoms.forEach(el => {
+        const atom = parseInt(el, 10);
+        obondPos.push(atom);
+      });
+      return obondPos; 
+    });
+  
+    const oScale = isWindowView ? windowScale : xScale;
+    if (isWindowView) {
+      obonds = obonds.filter(bond => {
+        const [x, y] = bond;
+        return x >= windowStart && y <= windowEnd;
+      });
+    }
+    var listOfArray= new Array(obondPos.length);
+    for(var i=0;i<obondPos.length;i+=2)
+    {
+      listOfArray[i] = g.append('rect');
+  
+      listOfArray[i]
+        .attr('width', oScale(obondPos[i+1])-oScale(obondPos[i]))
+        .attr('height', SPINE_HEIGHT)
+        .attr('x',oScale(obondPos[i]))
+        .attr('y', innerHeight / 2)
+        .style('fill', '#4fc3f7')
+        .style('stroke', 'black');
+    }
   }
 };
+
   const attachNTerminus = g => {
     const NTerm = g.append('text');
     NTerm.attr('dx', SPINE_START_POS - 50)
@@ -615,6 +656,7 @@ const attachHalfSpine = (g, isWindowView) => {
           toggleGlyco={setShowGlyco}
           toggleCysteine= {setShowCysteine}
           toggleSulfide={setShowDisulfide}
+          topology={topology}
           length={proteinLength}
         />
       ) : null}

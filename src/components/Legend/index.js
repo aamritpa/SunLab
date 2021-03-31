@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Box from '@material-ui/core/Box';
 import {
   Card,
   CardContent,
@@ -154,6 +155,32 @@ function Legend(props) {
               {length}
             </Typography>
           </Typography>
+        </div>
+
+        <div className="legend--menuItem">
+          <Box
+              component="span" 
+              display="block" 
+              bgcolor="#a5d6a7"
+              fontFamily="h10.fontFamily"
+              fontSize={{ xs: 'h10.fontSize', sm: 'h10.fontSize', md: 'h10.fontSize' }}
+              p={{ xs: 0.5, sm: 0.5, md: 0.5 }}
+              m={0.5}
+            >
+            Inside
+            </Box> 
+            <span>{"     "}</span>
+            <Box 
+              component="span" 
+              display="block"
+              bgcolor="#4fc3f7"
+              fontFamily="h10.fontFamily"
+              fontSize={{ xs: 'h10.fontSize', sm: 'h10.fontSize', md: 'h10.fontSize' }}
+              p={{ xs: 0.5, sm: 0.5, md: 0.5 }}
+              m={0.5}
+            >
+              Outside
+            </Box>
         </div>
       </CardContent>
     </Card>
