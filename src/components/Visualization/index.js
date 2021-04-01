@@ -459,10 +459,10 @@ function Visualization(props) {
         .style('stroke', 'black');
     });
   };
-
+  let spineWidth=0
   const attachSpine = (g, isWindowView) => {
     const spineBase = g.append('rect');
-    let spineWidth = fullScale ? proteinLength : SPINE_WIDTH;
+    spineWidth = fullScale ? proteinLength : SPINE_WIDTH;
     const startPos = isWindowView ? WINDOW_SPINE_START_POS : SPINE_START_POS;
     if (isWindowView) {
       spineWidth = WINDOW_SPINE_WIDTH;
@@ -478,8 +478,26 @@ function Visualization(props) {
   };
 //////////////////////////////////////////////////////////////////////
 const attachHalfSpine = (g, isWindowView) => {
+  let ilastSinglePosition =false;
   const ibondPos = [];
-  let insidePos=topology.match(/i\d+\-\d+/g)
+  let insidePos=topology.match(/\d+\i\d+/g);
+  let edgeCase=topology.split(/\-/g);
+
+
+  if(edgeCase[0].match(/\i/g))
+  {
+    let value= edgeCase[0].match(/\d+/g);
+    insidePos.push("0i"+value)
+    console.log(insidePos);
+  }
+  if(edgeCase[edgeCase.length-1].match(/\i/g))
+  {
+    let value= edgeCase[edgeCase.length-1].match(/\d+/g);
+    insidePos.push(value+"i"+proteinLength)
+    console.log(insidePos);
+    ilastSinglePosition=true;
+  }
+  
   if(insidePos!=null)
   {
     let ibonds = insidePos.map(pair => {
@@ -501,10 +519,18 @@ const attachHalfSpine = (g, isWindowView) => {
     var listOfArray= new Array(ibondPos.length);
     for(var i=0;i<ibondPos.length;i+=2)
     {
+      let width=0
+      if(ilastSinglePosition==true && (i+2)==ibondPos.length)
+      {
+        width=spineWidth-iScale(ibondPos[i])+30; //30 is added to cover the color to the end
+      }
+      else
+      {
+        width= iScale(ibondPos[i+1])-iScale(ibondPos[i]);
+      }
       listOfArray[i] = g.append('rect');
-  
       listOfArray[i]
-        .attr('width', iScale(ibondPos[i+1])-iScale(ibondPos[i]))
+        .attr('width',width)
         .attr('height', SPINE_HEIGHT)
         .attr('x',iScale(ibondPos[i]))
         .attr('y', innerHeight / 2)
@@ -514,8 +540,23 @@ const attachHalfSpine = (g, isWindowView) => {
   }
  
   //Outside Position
-  let outsidePos=topology.match(/o\d+\-\d+/g);
+  let outsidePos=topology.match(/\d+\o\d+/g);
+  let olastSinglePosition =false;
   const obondPos = [];
+
+  if(edgeCase[0].match(/\o/g))
+  {
+    let value= edgeCase[0].match(/\d+/g);
+    outsidePos.push("0o"+value)
+    console.log(outsidePos);
+  }
+  if(edgeCase[edgeCase.length-1].match(/\o/g))
+  {
+    let value= edgeCase[edgeCase.length-1].match(/\d+/g);
+    outsidePos.push(value+"o"+proteinLength)
+    console.log(insidePos);
+    olastSinglePosition=true;
+  }
   if(outsidePos!=null)
   {
     let obonds = outsidePos.map(pair => {
@@ -537,10 +578,19 @@ const attachHalfSpine = (g, isWindowView) => {
     var listOfArray= new Array(obondPos.length);
     for(var i=0;i<obondPos.length;i+=2)
     {
+      let width=0
+      if(olastSinglePosition==true && (i+2)==obondPos.length)
+      {
+        width=spineWidth-oScale(obondPos[i])+30;
+      }
+      else
+      {
+        width= oScale(obondPos[i+1])-oScale(obondPos[i]);
+      }
       listOfArray[i] = g.append('rect');
   
       listOfArray[i]
-        .attr('width', oScale(obondPos[i+1])-oScale(obondPos[i]))
+        .attr('width', width)
         .attr('height', SPINE_HEIGHT)
         .attr('x',oScale(obondPos[i]))
         .attr('y', innerHeight / 2)
