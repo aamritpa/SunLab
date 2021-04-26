@@ -482,19 +482,24 @@ const attachHalfSpine = (g, isWindowView) => {
   const ibondPos = [];
   let insidePos=topology.match(/\d+\i\d+/g);
   let edgeCase=topology.split(/\-/g);
+  console.log(insidePos);
 
-
+  if(insidePos==null)
+  {
+    insidePos=[];
+  }
   if(edgeCase[0].match(/\i/g))
   {
     let value= edgeCase[0].match(/\d+/g);
+    console.log(value);
     insidePos.push("0i"+value)
-    console.log(insidePos);
+    
   }
   if(edgeCase[edgeCase.length-1].match(/\i/g))
   {
     let value= edgeCase[edgeCase.length-1].match(/\d+/g);
     insidePos.push(value+"i"+proteinLength)
-    console.log(insidePos);
+    
     ilastSinglePosition=true;
   }
   
@@ -543,18 +548,22 @@ const attachHalfSpine = (g, isWindowView) => {
   let outsidePos=topology.match(/\d+\o\d+/g);
   let olastSinglePosition =false;
   const obondPos = [];
+  if(outsidePos==null)
+  {
+    outsidePos=[];
+  }
 
   if(edgeCase[0].match(/\o/g))
   {
     let value= edgeCase[0].match(/\d+/g);
     outsidePos.push("0o"+value)
-    console.log(outsidePos);
+    
   }
   if(edgeCase[edgeCase.length-1].match(/\o/g))
   {
     let value= edgeCase[edgeCase.length-1].match(/\d+/g);
     outsidePos.push(value+"o"+proteinLength)
-    console.log(insidePos);
+    
     olastSinglePosition=true;
   }
   if(outsidePos!=null)
