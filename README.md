@@ -1,6 +1,6 @@
 # Read Me
 
-URL : https://ddkpham.github.io/protein-visualizer/
+URL : https://awesome-jang-3cc811.netlify.app/
 
 This web application was built to visualize protein glycoslyation sites and sulfide bonds to illustrate patterns in their arrangement.
 
